@@ -1,0 +1,6 @@
+@MovieReservation.APi_HostAddress = http://localhost:5182
+
+GET {{MovieReservation.APi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
