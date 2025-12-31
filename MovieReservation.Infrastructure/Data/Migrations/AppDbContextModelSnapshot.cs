@@ -86,6 +86,76 @@ namespace MovieReservation.Infrastructure.Data.Migrations
                     b.ToTable("Movies");
                 });
 
+            modelBuilder.Entity("MovieReservation.Data.Entities.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)")
+                        .HasDefaultValue("USD");
+
+                    b.Property<string>("FailureReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("RefundedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ReservationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("StripePaymentIntentId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId")
+                        .HasDatabaseName("IX_Payment_AppUserId");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_Payment_CreatedAt");
+
+                    b.HasIndex("ReservationId")
+                        .HasDatabaseName("IX_Payment_ReservationId");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_Payment_Status");
+
+                    b.HasIndex("AppUserId", "CreatedAt")
+                        .HasDatabaseName("IX_Payment_UserId_CreatedAt");
+
+                    b.ToTable("Payments", (string)null);
+                });
+
             modelBuilder.Entity("MovieReservation.Data.Entities.Reservation", b =>
                 {
                     b.Property<int>("Id")
@@ -100,6 +170,9 @@ namespace MovieReservation.Infrastructure.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
 
                     b.Property<int>("SeatNumber")
                         .HasMaxLength(10)
@@ -176,6 +249,17 @@ namespace MovieReservation.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("MovieReservation.Data.Entities.Payment", b =>
+                {
+                    b.HasOne("MovieReservation.Data.Entities.Reservation", "Reservation")
+                        .WithMany()
+                        .HasForeignKey("ReservationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reservation");
                 });
 
             modelBuilder.Entity("MovieReservation.Data.Entities.Reservation", b =>

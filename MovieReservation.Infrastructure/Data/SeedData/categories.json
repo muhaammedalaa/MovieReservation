@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Action",
+    "description": "High-octane movies with thrilling sequences and intense scenes"
+  },
+  {
+    "name": "Drama",
+    "description": "Emotionally engaging stories with deep character development"
+  },
+  {
+    "name": "Comedy",
+    "description": "Lighthearted movies designed to make you laugh"
+  },
+  {
+    "name": "Horror",
+    "description": "Suspenseful and scary movies that build tension"
+  },
+  {
+    "name": "Sci-Fi",
+    "description": "Futuristic stories exploring advanced technology and space"
+  },
+  {
+    "name": "Romance",
+    "description": "Love stories that tug at your heartstrings"
+  },
+  {
+    "name": "Thriller",
+    "description": "Suspenseful narratives that keep you on the edge of your seat"
+  },
+  {
+    "name": "Animation",
+    "description": "Creative animated films for all ages"
+  }
+]

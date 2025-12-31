@@ -17,11 +17,11 @@ namespace MovieReservation.Infrastructure.Data.Context
         }
         override protected void OnModelCreating(ModelBuilder modelBuilder)
         {
-          
+
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
             base.OnModelCreating(modelBuilder);
-           
-           
+
+
 
         }
         public DbSet<Movie> Movies { get; set; }
@@ -29,6 +29,7 @@ namespace MovieReservation.Infrastructure.Data.Context
         public DbSet<Theater> Theaters { get; set; }
         public DbSet<Showtime> Showtimes { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<Payment> Payment { get; set; }
 
     }
 }

@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Cineplex Downtown",
+    "totalSeats": 150
+  },
+  {
+    "name": "Galaxy Cinema",
+    "totalSeats": 200
+  },
+  {
+    "name": "Star Theater",
+    "totalSeats": 120
+  },
+  {
+    "name": "Premier Screens",
+    "totalSeats": 180
+  },
+  {
+    "name": "Luxury Cinema",
+    "totalSeats": 100
+  },
+  {
+    "name": "Grand Theater",
+    "totalSeats": 250
+  }
+]

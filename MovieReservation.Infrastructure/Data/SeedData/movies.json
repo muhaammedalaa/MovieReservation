@@ -1,0 +1,92 @@
+[
+  {
+    "titel": "Inception",
+    "description": "A skilled thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea.",
+    "poster": "https://via.placeholder.com/300x450?text=Inception",
+    "durationInMinutes": 148,
+    "suitableAge": 13,
+    "releaseDate": "2024-01-15",
+    "categoryId": 1
+  },
+  {
+    "titel": "The Shawshank Redemption",
+    "description": "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+    "poster": "https://via.placeholder.com/300x450?text=Shawshank",
+    "durationInMinutes": 142,
+    "suitableAge": 15,
+    "releaseDate": "2024-01-20",
+    "categoryId": 2
+  },
+  {
+    "titel": "Forrest Gump",
+    "description": "The presidencies of Kennedy and Johnson unfold as seen through the perspective of an Alabama man with an IQ of 75.",
+    "poster": "https://via.placeholder.com/300x450?text=ForrestGump",
+    "durationInMinutes": 142,
+    "suitableAge": 8,
+    "releaseDate": "2024-01-25",
+    "categoryId": 2
+  },
+  {
+    "titel": "The Dark Knight",
+    "description": "When the menace known as the Joker wreaks havoc on Gotham, the Dark Knight must accept one of the greatest psychological tests.",
+    "poster": "https://via.placeholder.com/300x450?text=DarkKnight",
+    "durationInMinutes": 152,
+    "suitableAge": 13,
+    "releaseDate": "2024-02-01",
+    "categoryId": 1
+  },
+  {
+    "titel": "Pulp Fiction",
+    "description": "The lives of two mob hitmen, a boxer, a gangster and his wife intertwine in four tales of violence and redemption.",
+    "poster": "https://via.placeholder.com/300x450?text=PulpFiction",
+    "durationInMinutes": 154,
+    "suitableAge": 18,
+    "releaseDate": "2024-02-05",
+    "categoryId": 7
+  },
+  {
+    "titel": "Interstellar",
+    "description": "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
+    "poster": "https://via.placeholder.com/300x450?text=Interstellar",
+    "durationInMinutes": 169,
+    "suitableAge": 12,
+    "releaseDate": "2024-02-10",
+    "categoryId": 5
+  },
+  {
+    "titel": "The Conjuring",
+    "description": "Paranormal investigators work to help a family terrorized by a dark presence in their farmhouse.",
+    "poster": "https://via.placeholder.com/300x450?text=Conjuring",
+    "durationInMinutes": 112,
+    "suitableAge": 13,
+    "releaseDate": "2024-02-15",
+    "categoryId": 4
+  },
+  {
+    "titel": "Toy Story",
+    "description": "A cowboy doll is accidentally knocked out the window and goes on an adventure to get back home.",
+    "poster": "https://via.placeholder.com/300x450?text=ToyStory",
+    "durationInMinutes": 81,
+    "suitableAge": 0,
+    "releaseDate": "2024-02-20",
+    "categoryId": 8
+  },
+  {
+    "titel": "The Notebook",
+    "description": "A poor yet passionate man falls in love with a rich young woman, giving her a sense of freedom.",
+    "poster": "https://via.placeholder.com/300x450?text=Notebook",
+    "durationInMinutes": 123,
+    "suitableAge": 13,
+    "releaseDate": "2024-02-25",
+    "categoryId": 6
+  },
+  {
+    "titel": "Superbad",
+    "description": "Two co-dependent high school seniors are forced to deal with separation anxiety after their plan to stage a booze-soaked party goes awry.",
+    "poster": "https://via.placeholder.com/300x450?text=Superbad",
+    "durationInMinutes": 113,
+    "suitableAge": 15,
+    "releaseDate": "2024-03-01",
+    "categoryId": 3
+  }
+]

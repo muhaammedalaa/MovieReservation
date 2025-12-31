@@ -16,7 +16,8 @@ namespace MovieReservation.Data.Entities
         public int? ShowTimeId { get; set; }
         public string AppUserId { get; set; }
         public Showtime? Showtime { get; set; }
+        public bool IsPaid { get; set; } = false;
         //public AppUser? User { get; set; }
-        
+
     }
 }

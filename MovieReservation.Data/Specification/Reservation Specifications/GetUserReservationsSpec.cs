@@ -17,10 +17,6 @@ namespace MovieReservation.Data.Specification.Reservation_Specifications
             AddOrderByDescending(r => r.CreatedAt);
             ApplyPaging((pageNumber - 1) * pageSize, pageSize);
         }
-        public GetUserReservationsSpec(string userId)
-            : base(r => r.AppUserId == userId)
-        {
-
-        }
+      
     }
 }

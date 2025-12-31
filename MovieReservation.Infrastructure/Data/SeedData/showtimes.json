@@ -1,0 +1,98 @@
+[
+  {
+    "movieId": 1,
+    "theaterId": 1,
+    "price": 12.99,
+    "startDate": "2024-12-28T14:00:00"
+  },
+  {
+    "movieId": 1,
+    "theaterId": 1,
+    "price": 14.99,
+    "startDate": "2024-12-28T18:00:00"
+  },
+  {
+    "movieId": 1,
+    "theaterId": 2,
+    "price": 13.99,
+    "startDate": "2024-12-28T19:30:00"
+  },
+  {
+    "movieId": 2,
+    "theaterId": 2,
+    "price": 12.99,
+    "startDate": "2024-12-28T15:00:00"
+  },
+  {
+    "movieId": 2,
+    "theaterId": 3,
+    "price": 11.99,
+    "startDate": "2024-12-28T16:30:00"
+  },
+  {
+    "movieId": 3,
+    "theaterId": 1,
+    "price": 12.99,
+    "startDate": "2024-12-29T10:00:00"
+  },
+  {
+    "movieId": 3,
+    "theaterId": 4,
+    "price": 13.99,
+    "startDate": "2024-12-29T13:00:00"
+  },
+  {
+    "movieId": 4,
+    "theaterId": 2,
+    "price": 14.99,
+    "startDate": "2024-12-29T20:00:00"
+  },
+  {
+    "movieId": 4,
+    "theaterId": 5,
+    "price": 15.99,
+    "startDate": "2024-12-29T21:30:00"
+  },
+  {
+    "movieId": 5,
+    "theaterId": 6,
+    "price": 14.99,
+    "startDate": "2024-12-29T19:00:00"
+  },
+  {
+    "movieId": 6,
+    "theaterId": 3,
+    "price": 15.99,
+    "startDate": "2024-12-30T17:00:00"
+  },
+  {
+    "movieId": 6,
+    "theaterId": 4,
+    "price": 14.99,
+    "startDate": "2024-12-30T19:45:00"
+  },
+  {
+    "movieId": 7,
+    "theaterId": 1,
+    "price": 13.99,
+    "startDate": "2024-12-30T20:30:00"
+  },
+  {
+    "movieId": 8,
+    "theaterId": 5,
+    "price": 11.99,
+    "startDate": "2024-12-30T14:00:00"
+  },
+  {
+    "movieId": 9,
+    "theaterId": 2,
+    "price": 12.99,
+    "startDate": "2024-12-31T18:00:00"
+  },
+  {
+    "movieId": 10,
+    "theaterId": 3,
+    "price": 12.99,
+    "startDate": "2024-12-31T19:30:00"
+  }
+]
