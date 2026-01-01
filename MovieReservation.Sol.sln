@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36705.20 d17.14
+VisualStudioVersion = 17.14.36705.20
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieReservation.Core", "MovieReservation.Core\MovieReservation.Core.csproj", "{A80F4188-45BA-43C2-A635-FCE88E632E0F}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieReservation.Sol.AppHost", "MovieReservation.Sol.AppHost\MovieReservation.Sol.AppHost.csproj", "{708B9FED-E123-4D8C-B2EE-F054E372EBD4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieReservation.Sol.ServiceDefaults", "MovieReservation.Sol.ServiceDefaults\MovieReservation.Sol.ServiceDefaults.csproj", "{16E87091-0E1F-C320-8583-BE2F6A9DC738}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieReservation.Tests", "MovieReservation.Tests\MovieReservation.Tests.csproj", "{F1EA2C06-299E-4561-ABED-9493651C1F2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{16E87091-0E1F-C320-8583-BE2F6A9DC738}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16E87091-0E1F-C320-8583-BE2F6A9DC738}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16E87091-0E1F-C320-8583-BE2F6A9DC738}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1EA2C06-299E-4561-ABED-9493651C1F2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1EA2C06-299E-4561-ABED-9493651C1F2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1EA2C06-299E-4561-ABED-9493651C1F2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1EA2C06-299E-4561-ABED-9493651C1F2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

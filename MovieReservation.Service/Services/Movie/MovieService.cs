@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using MovieReservation.Data.Contracts;
 using MovieReservation.Data.Dtos;
 using MovieReservation.Data.Service.Contract;
@@ -15,11 +16,15 @@ namespace MovieReservation.Service.Services.Movie
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheService _cacheService;
+        private readonly ILogger<MovieService> _logger;
 
-        public MovieService(IMapper mapper, IUnitOfWork unitOfWork)
+        public MovieService(IMapper mapper, IUnitOfWork unitOfWork, ICacheService cacheService, ILogger<MovieService> logger)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _cacheService = cacheService;
+            _logger = logger;
         }
         public async Task<MovieDTO> CreateMovieAsync(MovieDTO movieDTO)
         {
@@ -37,6 +42,8 @@ namespace MovieReservation.Service.Services.Movie
             movieEntity.CreatedAt = DateTime.UtcNow;
             await _unitOfWork.Repository<Data.Entities.Movie>().AddAsync(movieEntity);
             await _unitOfWork.SaveChangesAsync();
+            await _cacheService.RemoveByPatternAsync("Movie:*"); // Invalidate all movie-related caches
+            _logger.LogInformation("🗑️ Cache invalidated for pattern 'Movie:*' after creating movie: {MovieTitle}", movieEntity.Titel);
             return _mapper.Map<MovieDTO>(movieEntity);
         }
 
@@ -49,6 +56,8 @@ namespace MovieReservation.Service.Services.Movie
                 return false;
             _unitOfWork.Repository<Data.Entities.Movie>().Delete(movieTask);
             await _unitOfWork.SaveChangesAsync();
+            await _cacheService.RemoveByPatternAsync("Movie:*"); // Invalidate all movie-related caches
+            _logger.LogInformation("🗑️ Cache invalidated for pattern 'Movie:*' after deleting movie ID: {MovieId}", movieId);
             return true;
         }
 
@@ -61,18 +70,45 @@ namespace MovieReservation.Service.Services.Movie
         public async Task<PaginatedResultDTO<MovieDTO>> GetAllMoviesAsync(int pageNumber = 1, int pageSize = 10)
         {
             ValidatePagingParameters(pageNumber, pageSize);
+            var cacheKey = $"Movie:page:{pageNumber}:size:{pageSize}";
+            try
+            {
+                // Try to get from cache
+                var cachedResult = await _cacheService.GetAsync<PaginatedResultDTO<MovieDTO>>(cacheKey);
+                if (cachedResult != null)
+                {
+                    _logger.LogInformation(
+                        "✅ Cache HIT: Retrieved all movies from cache (Page: {PageNumber}, Size: {PageSize})",
+                        pageNumber, pageSize);
+                    return cachedResult;
+                }
+
+                _logger.LogInformation(
+                    "❌ Cache MISS: Fetching all movies from database (Page: {PageNumber}, Size: {PageSize})",
+                    pageNumber, pageSize);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Cache retrieval failed, proceeding to database");
+            }
             var spec = new GetMoviesWithCategorySpec(pageNumber, pageSize);
             var movies = await _unitOfWork.Repository<Data.Entities.Movie>().GetAsync(spec);
             var countSpec = new GetMovieCountSpec();
             var totalItems = await _unitOfWork.Repository<Data.Entities.Movie>().CountAsync(countSpec);
             var mappedMovies = _mapper.Map<IEnumerable<MovieDTO>>(movies);
-            return new PaginatedResultDTO<MovieDTO>
+            var result = new PaginatedResultDTO<MovieDTO>
             {
                 Items = mappedMovies.ToList(),
                 TotalCount = totalItems,
                 PageNumber = pageNumber,
                 PageSize = pageSize
             };
+            int cacheMinutes = 5;
+            await _cacheService.SetAsync(cacheKey, result, TimeSpan.FromMinutes(cacheMinutes));
+            _logger.LogInformation(
+        "📝 Cached all movies (Page: {PageNumber}, Size: {PageSize}) for {Minutes} minutes",
+        pageNumber, pageSize, cacheMinutes);
+            return result;
 
         }
 
@@ -182,6 +218,8 @@ namespace MovieReservation.Service.Services.Movie
             existingMovieTask.Id = movieId;
             _unitOfWork.Repository<Data.Entities.Movie>().Update(existingMovieTask);
             await _unitOfWork.SaveChangesAsync();
+            await _cacheService.RemoveByPatternAsync("Movie:*"); // Invalidate all movie-related caches
+            _logger.LogInformation("🗑️ Cache invalidated for pattern 'Movie:*' after updating movie ID: {MovieId}", movieId);
             return true;
         }
         private static void ValidatePagingParameters(int pageNumber, int pageSize)

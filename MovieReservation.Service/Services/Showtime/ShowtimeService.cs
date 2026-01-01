@@ -1,16 +1,9 @@
-﻿using AutoMapper;
+using AutoMapper;
 using MovieReservation.Data.Contracts;
 using MovieReservation.Data.Dtos;
-using MovieReservation.Data.Service.Contract;
 using MovieReservation.Data.Entities;
+using MovieReservation.Data.Service.Contract;
 using MovieReservation.Data.Specification.Showtime_Specifications;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.SqlTypes;
-using System.Diagnostics.CodeAnalysis;
 using MovieEntity = MovieReservation.Data.Entities.Movie;
 using ShowtimeEntity = MovieReservation.Data.Entities.Showtime;
 
@@ -21,11 +14,13 @@ namespace MovieReservation.Service.Services.Showtime
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheService _cacheService;
 
-        public ShowtimeService(IMapper mapper, IUnitOfWork unitOfWork)
+        public ShowtimeService(IMapper mapper, IUnitOfWork unitOfWork, ICacheService cacheService)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _cacheService = cacheService;
         }
         public async Task<ShowtimeDTO> CreateShowtimeAsync(CreateShowtimeDTO createDTO)
         {
@@ -48,6 +43,7 @@ namespace MovieReservation.Service.Services.Showtime
             var showtime = _mapper.Map<ShowtimeEntity>(createDTO);
             await _unitOfWork.Repository<ShowtimeEntity>().AddAsync(showtime);
             await _unitOfWork.SaveChangesAsync();
+            await _cacheService.RemoveByPatternAsync("showtimes:*"); // Invalidate all showtime-related caches
             return _mapper.Map<ShowtimeDTO>(showtime);
 
         }
@@ -71,18 +67,24 @@ namespace MovieReservation.Service.Services.Showtime
         public async Task<PaginatedResultDTO<ShowtimeDTO>> GetAllShowtimesAsync(int pageNumber = 1, int pageSize = 10)
         {
             ValidatePagination(pageNumber, pageSize);
+            var cacheKey = $"showtimes:page:{pageNumber}:size:{pageSize}";
+            var cached = await _cacheService.GetAsync<PaginatedResultDTO<ShowtimeDTO>>(cacheKey);
+            if (cached != null)
+                return cached;
             var spec = new GetAllShowtimesSpec(pageSize, pageNumber);
             var showtimes = await _unitOfWork.Repository<ShowtimeEntity>().GetAsync(spec);
             var countspec = new GetShowtimeCountSpec();
             var totalCount = await _unitOfWork.Repository<ShowtimeEntity>().CountAsync(countspec);
             var Mappedshowtime = _mapper.Map<IEnumerable<ShowtimeDTO>>(showtimes);
-            return new PaginatedResultDTO<ShowtimeDTO>
+            var result = new PaginatedResultDTO<ShowtimeDTO>
             {
                 Items = Mappedshowtime.ToList(),
                 TotalCount = totalCount,
                 PageNumber = pageNumber,
                 PageSize = pageSize
             };
+            await _cacheService.SetAsync(cacheKey, result, TimeSpan.FromMinutes(5));
+            return result;
         }
 
         public async Task<IEnumerable<int>> GetReservedSeatsAsync(int showtimeId)

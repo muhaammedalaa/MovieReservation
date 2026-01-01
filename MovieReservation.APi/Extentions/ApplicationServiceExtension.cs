@@ -18,9 +18,11 @@ using MovieReservation.Service.Models;
 using MovieReservation.Service.Services.Auth;
 using MovieReservation.Service.Services.Movie;
 using MovieReservation.Service.Services.Payment;
+using MovieReservation.Service.Services.RedisCache;
 using MovieReservation.Service.Services.Reservation;
 using MovieReservation.Service.Services.Showtime;
 using MovieReservation.Service.Services.Token;
+using StackExchange.Redis;
 using Stripe;
 using System.Text;
 
@@ -35,12 +37,14 @@ namespace MovieReservation.APi.Extentions
             services.AddDbContextServices(Configuration);
             services.AddIdentityServices();
             services.AddMappingServices(Configuration);
+            services.AddRedisCache(Configuration);
             services.AddApplicationServices();
             services.AddAuthenticationServices(Configuration);
             services.AddStripeServices(Configuration);
             services.AddCorsServices(Configuration);
             services.AddCompressionServices();
             services.AddEmailServices(Configuration);
+
 
             return services;
         }
@@ -246,5 +250,62 @@ namespace MovieReservation.APi.Extentions
             services.Configure<EmailSettings>(emailSettings);
             return services;
         }
+        // Add this method
+        private static IServiceCollection AddRedisCache(this IServiceCollection services, IConfiguration Configuration)
+        {
+            var redisSettings = Configuration.GetSection("Redis");
+            var isEnabled = redisSettings.GetValue("Enabled", true);
+            var connection = redisSettings.GetValue("Connection", "localhost:6379");
+
+            if (!isEnabled)
+            {
+                // Use in-memory cache if Redis is disabled
+                services.AddMemoryCache();
+                return services;
+            }
+
+            try
+            {
+                var options = ConfigurationOptions.Parse(connection);
+                options.AbortOnConnectFail = false;
+                options.ConnectTimeout = 5000;
+                options.SyncTimeout = 5000;
+
+                // Create and register ConnectionMultiplexer as SINGLETON
+                var connectionMultiplexer = ConnectionMultiplexer.Connect(options);
+
+                if (!connectionMultiplexer.IsConnected)
+                {
+                    throw new InvalidOperationException(
+                        $"Could not connect to Redis at {connection}. " +
+                        "Make sure Redis is running: docker-compose up -d redis");
+                }
+
+                // Register as SINGLETON - this is critical!
+                services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
+                //services.AddSingleton<IConfiguration>(Configuration);
+                // Register RedisCacheService as SINGLETON
+                services.AddSingleton<ICacheService, RedisCacheService>();
+
+                return services;
+            }
+            catch (Exception ex)
+            {
+                // Log and throw - don't silently fail
+                throw new InvalidOperationException(
+                    $"Redis initialization failed. Connection string: {connection}\n" +
+                    $"Error: {ex.Message}\n" +
+                    $"Solution: Start Redis with 'docker-compose up -d redis'",
+                    ex);
+            }
+        }
+
+
     }
+
+
+
+
+
 }
+
