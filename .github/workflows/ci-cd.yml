@@ -29,7 +29,7 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           cache: true
-          cache-dependency-path: '**/packages.lock.json'
+         
 
       - name: 📦 Restore dependencies
         run: dotnet restore
@@ -37,19 +37,23 @@ jobs:
       - name: 🔨 Build solution
         run: dotnet build --configuration Release --no-restore
 
-      - name: 🧪 Run tests
-        run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+      - name: 🧪 Run tests + Coverage
+        run: |
+          dotnet test --configuration Release --no-build --verbosity normal \
+            --logger "trx;LogFileName=test-results.trx" \
+            --results-directory ./TestResults \
+            /p:CollectCoverage=true \
+            /p:CoverletOutput=./TestResults/coverage.opencover.xml \
+            /p:CoverletOutputFormat=opencover
+
 
       - name: 📊 Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: '**/test-results.trx'
-
-      - name: 🔍 Code coverage
-        run: dotnet test --configuration Release /p:CollectCoverage=true /p:CoverageFormat=opencover
-        continue-on-error: true
+          path: ./TestResults/test-results.trx
+          if-no-files-found: warn
 
       - name: 📈 Upload coverage reports
         uses: codecov/codecov-action@v3
