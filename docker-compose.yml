@@ -1,6 +1,8 @@
 version: '3.8'
 
 services:
+
+  # Redis Cache
   redis:
     image: redis:7-alpine
     container_name: moviereservation-redis
@@ -8,32 +10,73 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
-    command: redis-server --appendonly yes
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
+      interval: 10s
+      timeout: 5s
       retries: 5
     networks:
       - moviereservation-network
+    restart: unless-stopped
 
+  # SQL Server Database
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: moviereservation-sqlserver
     ports:
       - "1433:1433"
     environment:
-      SA_PASSWORD: "YourPassword123!"
+      SA_PASSWORD: "${SQLSERVER_SA_PASSWORD}"
       ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
     volumes:
       - sqlserver-data:/var/opt/mssql
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     healthcheck:
-      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "YourPassword123!", "-Q", "SELECT 1"]
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"${SQLSERVER_SA_PASSWORD}\" -C -Q \"SELECT 1\" || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 60s
     networks:
       - moviereservation-network
+    restart: unless-stopped
+
+  # Movie Reservation API
+  api:
+    build:
+      context: .
+      dockerfile: MovieReservation.APi/Dockerfile
+    container_name: moviereservation-api
+    ports:
+      - "5000:80"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "${ASPNETCORE_ENVIRONMENT:-Development}"
+      ASPNETCORE_URLS: "http://+:80"
+      ConnectionStrings__DefaultConnections: "Server=sqlserver,1433;Database=${SQLSERVER_DATABASE};User Id=sa;Password=${SQLSERVER_SA_PASSWORD};TrustServerCertificate=True;Connection Timeout=30;"
+      ConnectionStrings__IdentityConnections: "Server=sqlserver,1433;Database=${SQLSERVER_IDENTITY_DATABASE};User Id=sa;Password=${SQLSERVER_SA_PASSWORD};TrustServerCertificate=True;Connection Timeout=30;"
+      Redis__Connection: "redis:6379"
+      Redis__Enabled: "true"
+      Jwt__SecretKey: "${JWT_SECRET_KEY}"
+      Jwt__Issuer: "${JWT_ISSUER}"
+      Jwt__Audience: "${JWT_AUDIENCE}"
+      Stripe__SecretKey: "${STRIPE_SECRET_KEY}"
+      Stripe__WebhookSecret: "${STRIPE_WEBHOOK_SECRET}"
+    depends_on:
+      redis:
+        condition: service_healthy
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - moviereservation-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
 volumes:
   redis-data:

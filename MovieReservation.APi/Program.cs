@@ -19,6 +19,7 @@ public class Program
         //builder.Services.AddOpenApi();
 
         var app = builder.Build();
+        await app.InitializeDatabaseAsync();
 
         await app.ConfigureMiddlewareAsync();
 
