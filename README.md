@@ -296,6 +296,13 @@ The solution is organized into several projects, each representing a distinct la
     dotnet ef database update --project MovieReservation.Data
     ```
 
+4.  **Generate `packages.lock.json` (if using package locking):**
+    If your project is configured to use package locking (e.g., via `<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>` in your `.csproj` file), you'll need to generate the `packages.lock.json` file after restoring packages. This ensures deterministic builds.
+    ```bash
+    dotnet restore
+    ```
+    This file should be committed to your version control system.
+
 ---
 
 ## 🛠️ Configuration
