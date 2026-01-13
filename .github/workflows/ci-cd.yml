@@ -29,8 +29,6 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           cache: true
-         
-
 
       - name: 📦 Restore dependencies
         run: dotnet restore
@@ -41,26 +39,25 @@ jobs:
       - name: 🧪 Run tests + Coverage
         run: |
           dotnet test --configuration Release --no-build --verbosity normal \
-            --logger "trx;LogFileName=test-results.trx" \
+            --logger "trx" \
             --results-directory ./TestResults \
             /p:CollectCoverage=true \
             /p:CoverletOutput=./TestResults/coverage.opencover.xml \
             /p:CoverletOutputFormat=opencover
-
 
       - name: 📊 Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: ./TestResults/test-results.trx
+          path: ./TestResults/**/*.trx
           if-no-files-found: warn
 
       - name: 📈 Upload coverage reports
-        uses: codecov/codecov-action@v3
         if: always()
+        uses: codecov/codecov-action@v4
         with:
-          files: ./coverage.opencover.xml
+          files: ./TestResults/coverage.opencover.xml
           flags: unittests
           name: codecov-umbrella
 
@@ -151,6 +148,7 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
 
       - name: 📦 Restore dependencies
         run: dotnet restore
@@ -209,7 +207,7 @@ jobs:
     environment:
       name: Production
       url: https://api.moviereservation.com
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
